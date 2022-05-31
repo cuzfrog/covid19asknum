@@ -9,14 +9,4 @@ root.render(
     <App />
   </React.StrictMode>
 );
-
-async function test1() {
-    setTimeout(() => console.info("Called!"), 100);
-}
-
-console.table(process.env);
-async function callme() {
-    await test1();
-}
-
-callme();
+console.log("App rendered.");
