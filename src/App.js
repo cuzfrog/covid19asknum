@@ -1,26 +1,52 @@
-import React from "react";
-import logo from './logo.svg';
-import './App.scss';
+import React, {useEffect, useRef, useState} from "react";
+import Chat, { Bubble, useMessages } from '@chatui/core';
+import '@chatui/core/dist/index.css';
+import "./App.scss";
+import {search} from "./search-func";
 
-function App() {
+export default function App(){
+  const { messages, appendMsg, setTyping } = useMessages([]);
+  const [data, setData] = useState();
+  useEffect(() => {
+    fetch("https://coronavirus-tracker-api.herokuapp.com/v2/locations")
+        .then(resp => resp.json())
+        .then(setData)
+        .catch(err => console.log(err));
+  }, []);
+
+  function handleSend(type, val) {
+    if (type === 'text' && val.trim()) {
+      appendMsg({
+        type: 'text',
+        content: { text: val },
+        position: 'right',
+      });
+
+      setTyping(true);
+      const result = search(data, val);
+
+      setTimeout(() => {
+        appendMsg({
+          type: 'text',
+          content: { text: result },
+        });
+      }, 1000);
+    }
+  }
+
+  function renderMessageContent(msg) {
+    const { content } = msg;
+    return <Bubble content={content.text} />;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <Chat
+          navbar={{ title: 'COVID-19 Ask How Many.' }}
+          messages={messages}
+          renderMessageContent={renderMessageContent}
+          onSend={handleSend}
+          locale="en-US"
+      />
   );
-}
+};
 
-export default App;

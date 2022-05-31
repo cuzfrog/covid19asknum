@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/cuzfrog/covid19asknum#readme",
   "dependencies": {
+    "@chatui/core": "1.4.1",
     "react": "18.1.0",
     "react-dom": "18.1.0"
   },
